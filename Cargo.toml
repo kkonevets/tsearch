@@ -4,6 +4,14 @@ version = "0.1.0"
 authors = ["Kirill Konevets <kkonevets@gmail.com>"]
 edition = "2018"
 
+[lib]
+name = "diesel_lib"
+path = "src/lib.rs"
+
+[[bin]]
+name = "ssergeev"
+path = "src/main.rs"
+
 [dependencies]
 tantivy = "^0.9"
 tempdir = "0.3.7"

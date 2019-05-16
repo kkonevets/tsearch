@@ -2,6 +2,8 @@
 extern crate tantivy;
 extern crate diesel;
 
+extern crate diesel_lib;
+
 use std::fs;
 use std::io::ErrorKind;
 use tantivy::collector::TopDocs;
@@ -9,6 +11,9 @@ use tantivy::query::QueryParser;
 use tantivy::schema::*;
 use tantivy::Index;
 use tantivy::ReloadPolicy;
+
+use self::diesel::prelude::*;
+use diesel_lib::models::*;
 
 fn main() -> tantivy::Result<()> {
     let index_path = "./index";

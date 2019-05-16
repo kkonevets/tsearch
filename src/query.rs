@@ -1,5 +1,6 @@
 extern crate tantivy;
 
+use std::time::Instant;
 use tantivy::collector::TopDocs;
 use tantivy::query::QueryParser;
 use tantivy::Index;
@@ -29,9 +30,16 @@ fn main() -> tantivy::Result<()> {
 
     let query_parser = QueryParser::for_index(&index, vec![title_t, text_t]);
 
-    let query = query_parser.parse_query("стать")?;
+    // ########## query start ##############
 
+    let now = Instant::now();
+
+    let query = query_parser.parse_query("стать программистом")?;
     let top_docs = searcher.search(&query, &TopDocs::with_limit(10))?;
+
+    println!("{} ms", now.elapsed().as_millis());
+
+    // ########## query finish ##############
 
     for (_score, doc_address) in top_docs {
         let retrieved_doc = searcher.doc(doc_address)?;

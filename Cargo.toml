@@ -9,8 +9,12 @@ name = "diesel_lib"
 path = "src/lib.rs"
 
 [[bin]]
-name = "ssergeev"
-path = "src/main.rs"
+name = "commit_index"
+path = "src/commit_index.rs"
+
+[[bin]]
+name = "query"
+path = "src/query.rs"
 
 [dependencies]
 tantivy = "^0.9"

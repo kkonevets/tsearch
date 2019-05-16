@@ -7,6 +7,8 @@ use tantivy::Index;
 use tantivy::ReloadPolicy;
 
 fn main() -> tantivy::Result<()> {
+    let now = Instant::now();
+
     let index_path = "./index";
 
     let index = Index::open_in_dir(index_path)?;
@@ -30,6 +32,11 @@ fn main() -> tantivy::Result<()> {
 
     let query_parser = QueryParser::for_index(&index, vec![title_t, text_t]);
 
+    println!(
+        "index and metadata loaded in {} ms",
+        now.elapsed().as_millis()
+    );
+
     // ########## query start ##############
 
     let now = Instant::now();
@@ -37,7 +44,7 @@ fn main() -> tantivy::Result<()> {
     let query = query_parser.parse_query("стать программистом")?;
     let top_docs = searcher.search(&query, &TopDocs::with_limit(10))?;
 
-    println!("{} ms", now.elapsed().as_millis());
+    println!("query execution time {} ms", now.elapsed().as_millis());
 
     // ########## query finish ##############
 

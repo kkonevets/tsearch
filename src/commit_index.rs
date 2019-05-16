@@ -46,7 +46,7 @@ fn main() -> tantivy::Result<()> {
         .load::<Post>(&connection)
         .expect("Error loading posts");
 
-    println!("Displaying {} posts", results.len());
+    println!("Indexing {} docs", results.len());
     for post in results {
         index_writer.add_document(doc!(
             thread_id_t => post.thread_id,

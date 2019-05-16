@@ -9,7 +9,7 @@ name = "diesel_lib"
 path = "src/lib.rs"
 
 [[bin]]
-name = "commit_index"
+name = "commit"
 path = "src/commit_index.rs"
 
 [[bin]]

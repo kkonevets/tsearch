@@ -14,6 +14,7 @@ use tantivy::ReloadPolicy;
 
 use self::diesel::prelude::*;
 use diesel_lib::models::*;
+use diesel_lib::*;
 
 fn main() -> tantivy::Result<()> {
     let index_path = "./index";
@@ -27,37 +28,44 @@ fn main() -> tantivy::Result<()> {
 
     let mut schema_builder = Schema::builder();
 
-    let thread_id = schema_builder.add_i64_field("thread_id", FAST);
-    let title = schema_builder.add_text_field("title", TEXT | STORED);
-    let body = schema_builder.add_text_field("body", TEXT);
-    let node_id = schema_builder.add_i64_field("node_id", FAST);
-    let need_moder = schema_builder.add_i64_field("need_moder_id", FAST);
-    let post_date = schema_builder.add_i64_field("post_date_id", FAST);
+    let thread_id_t = schema_builder.add_i64_field("thread_id", FAST);
+    let title_t = schema_builder.add_text_field("title", TEXT | STORED);
+    let text_t = schema_builder.add_text_field("text", TEXT);
+    let node_id_t = schema_builder.add_i64_field("node_id", FAST);
+    let need_moder_t = schema_builder.add_i64_field("need_moder_id", FAST);
+    let post_date_t = schema_builder.add_i64_field("post_date_id", FAST);
 
     let schema = schema_builder.build();
     let index = Index::create_in_dir(index_path, schema.clone())?;
     let mut index_writer = index.writer(50_000_000)?;
 
     // ### Adding documents
-    //
-    index_writer.add_document(doc!(
-    title => "Of Mice and Men",
-    body => "A few miles south of Soledad, the Salinas River drops in close to the hillside \
-            bank and runs deep and green. The water is warm too, for it has slipped twinkling \
-            over the yellow sands in the sunlight before reaching the narrow pool. On one \
-            side of the river the golden foothill slopes curve up to the strong and rocky \
-            Gabilan Mountains, but on the valley side the water is lined with trees—willows \
-            fresh and green with every spring, carrying in their lower leaf junctures the \
-            debris of the winter’s flooding; and sycamores with mottled, white, recumbent \
-            limbs and branches that arch over the pool"
-    ));
+    use diesel_lib::schema::threads_message_extra::dsl::*;
+
+    let connection = establish_connection();
+    let results = threads_message_extra
+        // .filter(published.eq(true))
+        // .limit(5)
+        .load::<Post>(&connection)
+        .expect("Error loading posts");
+
+    println!("Displaying {} posts", results.len());
+    for post in results {
+        index_writer.add_document(doc!(
+            thread_id_t => post.thread_id,
+            title_t => post.title,
+            text_t => post.text,
+            node_id_t => post.node_id,
+            need_moder_t => post.needModer,
+            post_date_t => post.post_date
+        ));
+    }
+    println!("Finished adding");
 
     // This call is blocking.
     index_writer.commit()?;
 
     // # Searching
-    //
-    // ### Searcher
     //
     // In the code below, we rely on the 'ON_COMMIT' policy: the reader
     // will reload the index automatically after each commit.
@@ -70,9 +78,9 @@ fn main() -> tantivy::Result<()> {
 
     // ### Query
 
-    let query_parser = QueryParser::for_index(&index, vec![title, body]);
+    let query_parser = QueryParser::for_index(&index, vec![title_t, text_t]);
 
-    let query = query_parser.parse_query("sea whale")?;
+    let query = query_parser.parse_query("стать")?;
 
     let top_docs = searcher.search(&query, &TopDocs::with_limit(10))?;
 

@@ -1,9 +1,9 @@
 #[derive(Queryable)]
 pub struct Post {
-    pub thread_id: i32,
+    pub thread_id: i64,
     pub title: String,
     pub text: String,
-    pub node_id: i32,
-    pub needModer: i32,
-    pub post_date: i32,
+    pub node_id: i64,
+    pub needModer: i64,
+    pub post_date: i64,
 }

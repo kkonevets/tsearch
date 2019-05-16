@@ -1,10 +1,10 @@
 table! {
     threads_message_extra (thread_id) {
-        thread_id -> Integer,
+        thread_id -> BigInt,
         title -> Varchar,
         text -> Text,
-        node_id -> Integer,
-        needModer -> Integer,
-        post_date -> Integer,
+        node_id -> BigInt,
+        needModer -> BigInt,
+        post_date -> BigInt,
     }
 }

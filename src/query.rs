@@ -47,7 +47,8 @@ fn main() -> tantivy::Result<()> {
 
     let searcher = reader.searcher();
 
-    let query = query_parser.parse_query("(стать программист) AND (node_id:10)")?;
+    let query =
+        query_parser.parse_query("(стать программистом) AND (node_id:10)")?;
     let top_docs = searcher.search(&query, &TopDocs::with_limit(10))?;
 
     println!("query execution time {} ms", now.elapsed().as_millis());

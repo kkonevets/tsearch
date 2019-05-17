@@ -7,7 +7,7 @@ use tantivy::query::QueryParser;
 use tantivy::Index;
 use tantivy::ReloadPolicy;
 
-use common::register_tokenizer;
+use common::{preprocess, register_tokenizer};
 
 fn main() -> tantivy::Result<()> {
     let now = Instant::now();
@@ -47,8 +47,8 @@ fn main() -> tantivy::Result<()> {
 
     let searcher = reader.searcher();
 
-    let query =
-        query_parser.parse_query("(стать программистом) AND (node_id:10)")?;
+    let qtext = preprocess("Прогнозы на бейсбол MLB-Bet");
+    let query = query_parser.parse_query(qtext.as_str())?;
     let top_docs = searcher.search(&query, &TopDocs::with_limit(10))?;
 
     println!("query execution time {} ms", now.elapsed().as_millis());
@@ -57,7 +57,7 @@ fn main() -> tantivy::Result<()> {
 
     for (_score, doc_address) in top_docs {
         let retrieved_doc = searcher.doc(doc_address)?;
-        println!("{}", schema.to_json(&retrieved_doc));
+        println!("score: {}, {}", _score, schema.to_json(&retrieved_doc));
     }
 
     Ok(())

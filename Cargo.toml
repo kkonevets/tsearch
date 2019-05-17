@@ -20,6 +20,10 @@ path = "src/query.rs"
 name = "stem"
 path = "src/stem.rs"
 
+[[bin]]
+name = "play"
+path = "src/play.rs"
+
 [dependencies]
 tantivy = "^0.9"
 tempdir = "0.3.7"

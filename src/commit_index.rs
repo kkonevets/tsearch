@@ -58,8 +58,8 @@ fn main() -> tantivy::Result<()> {
     for post in results {
         index_writer.add_document(doc!(
             thread_id_t => post.thread_id,
-            title_t => post.title,
-            text_t => post.text,
+            title_t => preprocess(&post.title),
+            text_t => preprocess(&post.text),
             node_id_t => post.node_id,
             need_moder_t => post.needModer,
             post_date_t => post.post_date

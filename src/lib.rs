@@ -21,6 +21,10 @@ pub fn establish_connection() -> MysqlConnection {
         .expect(&format!("Error connecting to {}", database_url))
 }
 
+pub fn preprocess(text: &str) -> String {
+    return text.replace("-", " ");
+}
+
 pub fn register_tokenizer(index: &Index) {
     let ru_stem = SimpleTokenizer
         .filter(RemoveLongFilter::limit(40))

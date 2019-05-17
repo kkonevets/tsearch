@@ -7,5 +7,5 @@ fn main() {
 
     // Stemm the word "fruitlessly"
     // Please be aware that all algorithms expect their input to only contain lowercase characters.
-    println!("{}", en_stemmer.stem("программистом"));
+    println!("{}", en_stemmer.stem("дней"));
 }

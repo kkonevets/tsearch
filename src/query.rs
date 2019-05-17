@@ -41,7 +41,7 @@ fn main() -> tantivy::Result<()> {
         now.elapsed().as_millis()
     );
 
-    // ########## query start ##############
+    // ########## query start - client side ##############
 
     let now = Instant::now();
 

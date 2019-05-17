@@ -1,3 +1,4 @@
+extern crate common;
 extern crate tantivy;
 
 use std::time::Instant;
@@ -6,12 +7,16 @@ use tantivy::query::QueryParser;
 use tantivy::Index;
 use tantivy::ReloadPolicy;
 
+use common::register_tokenizer;
+
 fn main() -> tantivy::Result<()> {
     let now = Instant::now();
 
     let index_path = "./index";
 
     let index = Index::open_in_dir(index_path)?;
+    register_tokenizer(&index);
+
     let schema = index.schema();
 
     // # Searching

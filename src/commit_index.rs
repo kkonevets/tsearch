@@ -2,7 +2,7 @@
 extern crate tantivy;
 extern crate diesel;
 
-extern crate diesel_lib;
+extern crate common;
 
 use std::fs;
 use std::io::ErrorKind;
@@ -10,8 +10,8 @@ use tantivy::schema::*;
 use tantivy::Index;
 
 use self::diesel::prelude::*;
-use diesel_lib::models::*;
-use diesel_lib::*;
+use common::models::*;
+use common::*;
 
 fn main() -> tantivy::Result<()> {
     let index_path = "./index";
@@ -45,7 +45,7 @@ fn main() -> tantivy::Result<()> {
     register_tokenizer(&index);
 
     // ### Adding documents
-    use diesel_lib::schema::threads_message_extra::dsl::*;
+    use common::schema::threads_message_extra::dsl::*;
 
     let connection = establish_connection();
     let results = threads_message_extra

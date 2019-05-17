@@ -16,6 +16,10 @@ path = "src/commit_index.rs"
 name = "query"
 path = "src/query.rs"
 
+[[bin]]
+name = "stem"
+path = "src/stem.rs"
+
 [dependencies]
 tantivy = "^0.9"
 tempdir = "0.3.7"

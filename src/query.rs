@@ -46,7 +46,7 @@ fn main() -> tantivy::Result<()> {
 
     let now = Instant::now();
 
-    let query = query_parser.parse_query("стать программистом")?;
+    let query = query_parser.parse_query("стать программист")?;
     let top_docs = searcher.search(&query, &TopDocs::with_limit(10))?;
 
     println!("query execution time {} ms", now.elapsed().as_millis());

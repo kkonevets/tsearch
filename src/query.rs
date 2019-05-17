@@ -20,17 +20,16 @@ fn main() -> tantivy::Result<()> {
     let schema = index.schema();
 
     // # Searching
-    //
+
+    // For a search server you will typically create one reader for the entire lifetime of your
+    // program, and acquire a new searcher for every single request.
+
     // In the code below, we rely on the 'ON_COMMIT' policy: the reader
     // will reload the index automatically after each commit.
     let reader = index
         .reader_builder()
         .reload_policy(ReloadPolicy::OnCommit)
         .try_into()?;
-
-    let searcher = reader.searcher();
-
-    // ### Query
 
     let title_t = schema.get_field("title").unwrap();
     let text_t = schema.get_field("text").unwrap();
@@ -45,6 +44,8 @@ fn main() -> tantivy::Result<()> {
     // ########## query start ##############
 
     let now = Instant::now();
+
+    let searcher = reader.searcher();
 
     let query = query_parser.parse_query("(стать программист) AND (node_id:10)")?;
     let top_docs = searcher.search(&query, &TopDocs::with_limit(10))?;

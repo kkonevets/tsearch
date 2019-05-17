@@ -7,7 +7,6 @@ extern crate diesel_lib;
 use std::fs;
 use std::io::ErrorKind;
 use tantivy::schema::*;
-use tantivy::tokenizer::*;
 use tantivy::Index;
 
 use self::diesel::prelude::*;
@@ -43,12 +42,7 @@ fn main() -> tantivy::Result<()> {
     let index = Index::create_in_dir(index_path, schema.clone())?;
     let mut index_writer = index.writer(50_000_000)?;
 
-    let ru_stem = SimpleTokenizer
-        .filter(RemoveLongFilter::limit(40))
-        .filter(LowerCaser)
-        .filter(Stemmer::new(Language::Russian));
-
-    index.tokenizers().register("ru_stem", ru_stem);
+    register_tokenizer(&index);
 
     // ### Adding documents
     use diesel_lib::schema::threads_message_extra::dsl::*;

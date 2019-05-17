@@ -7,12 +7,13 @@ extern crate diesel_lib;
 use std::fs;
 use std::io::ErrorKind;
 use tantivy::schema::*;
-use tantivy::tokenizer::*;
 use tantivy::Index;
 
 use self::diesel::prelude::*;
 use diesel_lib::models::*;
 use diesel_lib::*;
+
+pub mod tokenizer;
 
 fn main() -> tantivy::Result<()> {
     let index_path = "./index";
@@ -32,21 +33,16 @@ fn main() -> tantivy::Result<()> {
 
     let mut schema_builder = Schema::builder();
 
-    let thread_id_t = schema_builder.add_i64_field("thread_id", FAST);
+    let thread_id_t = schema_builder.add_i64_field("thread_id", FAST | INDEXED | STORED);
     let title_t = schema_builder.add_text_field("title", text_options.clone() | STORED);
     let text_t = schema_builder.add_text_field("text", text_options.clone());
-    let node_id_t = schema_builder.add_i64_field("node_id", FAST);
-    let need_moder_t = schema_builder.add_i64_field("need_moder_id", FAST);
-    let post_date_t = schema_builder.add_i64_field("post_date_id", FAST);
+    let node_id_t = schema_builder.add_i64_field("node_id", FAST | INDEXED);
+    let need_moder_t = schema_builder.add_i64_field("need_moder_id", FAST | INDEXED);
+    let post_date_t = schema_builder.add_i64_field("post_date_id", FAST | INDEXED);
 
     let schema = schema_builder.build();
     let index = Index::create_in_dir(index_path, schema.clone())?;
     let mut index_writer = index.writer(50_000_000)?;
-
-    let ru_stem = SimpleTokenizer
-        // .filter(RemoveLongFilter::limit(40))
-        .filter(LowerCaser)
-        .filter(Stemmer::new(Language::Russian));
 
     index.tokenizers().register("ru_stem", ru_stem);
 

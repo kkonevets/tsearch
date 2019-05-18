@@ -12,7 +12,7 @@ use tantivy::collector::TopDocs;
 use tantivy::query::QueryParser;
 use tantivy::{Index, IndexReader, ReloadPolicy};
 
-use actix_web::{error, http, server, App, HttpRequest};
+use actix_web::{error, http, server, App, HttpRequest, HttpResponse};
 
 #[derive(Fail, Debug)]
 #[fail(display = "Search engine error")]
@@ -58,7 +58,7 @@ impl SearchState {
     }
 }
 
-fn index(req: &HttpRequest<SearchState>) -> Result<String, SearchEngineError> {
+fn index(req: &HttpRequest<SearchState>) -> Result<HttpResponse, SearchEngineError> {
     let state = req.state();
     let searcher = state.reader.borrow().searcher();
     let qtext = preprocess("WOW-флорист: Сырный БУМ");
@@ -104,7 +104,9 @@ fn index(req: &HttpRequest<SearchState>) -> Result<String, SearchEngineError> {
     result.push_str(&docs.join(","));
     result.push_str("]");
 
-    Ok(result)
+    Ok(HttpResponse::Ok()
+        .content_type("application/json")
+        .body(result))
 }
 
 fn main() {

@@ -47,7 +47,7 @@ fn main() -> tantivy::Result<()> {
 
     let searcher = reader.searcher();
 
-    let qtext = preprocess("Прогнозы на бейсбол MLB-Bet");
+    let qtext = preprocess("WOW-флорист: Сырный БУМ");
     let query = query_parser.parse_query(qtext.as_str())?;
     let top_docs = searcher.search(&query, &TopDocs::with_limit(10))?;
 

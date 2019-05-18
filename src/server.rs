@@ -91,10 +91,20 @@ fn index(req: &HttpRequest<SearchState>) -> Result<String, SearchEngineError> {
                 })
             }
         };
-        docs.push((_score, schema.to_json(&retrieved_doc)));
+
+        let mut doc_str = "[".to_string();
+        doc_str.push_str(&_score.to_string());
+        doc_str.push_str(",");
+        doc_str.push_str(&schema.to_json(&retrieved_doc));
+        doc_str.push_str("]");
+        docs.push(doc_str);
     }
 
-    Ok("".to_string())
+    let mut result = "[".to_string();
+    result.push_str(&docs.join(","));
+    result.push_str("]");
+
+    Ok(result)
 }
 
 fn main() {

@@ -86,14 +86,14 @@ impl SearchState {
 #[derive(Deserialize)]
 struct PostInfo {
     query: String,
-    topk: u64,
+    topk: usize,
 }
 
 fn index(
     (info, state): (Json<PostInfo>, State<SearchState>),
 ) -> Result<HttpResponse, SearchEngineError> {
     let searcher = state.reader.searcher();
-    let qtext = preprocess("WOW-флорист: AND Сырный БУМ");
+    let qtext = preprocess(info.query.as_str());
     let query = match state.query_parser.parse_query(qtext.as_str()) {
         Ok(v) => v,
         Err(e) => {
@@ -101,7 +101,7 @@ fn index(
         }
     };
 
-    let top_docs = match searcher.search(&query, &TopDocs::with_limit(10)) {
+    let top_docs = match searcher.search(&query, &TopDocs::with_limit(info.topk)) {
         Ok(v) => v,
         Err(e) => return Err(SearchEngineError::from(e)),
     };

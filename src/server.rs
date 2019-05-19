@@ -21,7 +21,13 @@ struct SearchEngineError {
 }
 
 // Use default implementation for `error_response()` method
-impl error::ResponseError for SearchEngineError {}
+impl error::ResponseError for SearchEngineError {
+    fn error_response(&self) -> HttpResponse {
+        HttpResponse::InternalServerError()
+            .content_type("text/html")
+            .body(&self.name)
+    }
+}
 
 struct SearchState {
     reader: RefCell<IndexReader>,
@@ -61,12 +67,12 @@ impl SearchState {
 fn index(req: &HttpRequest<SearchState>) -> Result<HttpResponse, SearchEngineError> {
     let state = req.state();
     let searcher = state.reader.borrow().searcher();
-    let qtext = preprocess("WOW-флорист: Сырный БУМ");
+    let qtext = preprocess("WOW-флорист: AND Сырный БУМ");
     let query = match state.query_parser.borrow().parse_query(qtext.as_str()) {
         Ok(v) => v,
-        Err(_) => {
+        Err(e) => {
             return Err(SearchEngineError {
-                name: "QueryParserError".to_string(),
+                name: format!("{:?}", e),
             })
         }
     };

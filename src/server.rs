@@ -8,6 +8,7 @@ extern crate failure;
 
 use common::{preprocess, register_tokenizer};
 use std::cell::RefCell;
+use std::sync::Arc;
 use tantivy::collector::TopDocs;
 use tantivy::query::QueryParser;
 use tantivy::{Index, IndexReader, ReloadPolicy};
@@ -20,7 +21,6 @@ struct SearchEngineError {
     name: String,
 }
 
-// Use default implementation for `error_response()` method
 impl error::ResponseError for SearchEngineError {
     fn error_response(&self) -> HttpResponse {
         HttpResponse::InternalServerError()
@@ -30,9 +30,9 @@ impl error::ResponseError for SearchEngineError {
 }
 
 struct SearchState {
-    reader: RefCell<IndexReader>,
-    query_parser: RefCell<QueryParser>,
-    schema: RefCell<tantivy::schema::Schema>,
+    reader: Arc<RefCell<IndexReader>>,
+    query_parser: Arc<RefCell<QueryParser>>,
+    schema: Arc<RefCell<tantivy::schema::Schema>>,
 }
 
 impl SearchState {
@@ -55,9 +55,9 @@ impl SearchState {
         let query_parser = QueryParser::for_index(&index, vec![title_t, text_t]);
 
         let state = SearchState {
-            reader: RefCell::new(reader),
-            query_parser: RefCell::new(query_parser),
-            schema: RefCell::new(schema),
+            reader: Arc::new(RefCell::new(reader)),
+            query_parser: Arc::new(RefCell::new(query_parser)),
+            schema: Arc::new(RefCell::new(schema)),
         };
 
         Ok(state)

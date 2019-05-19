@@ -5,19 +5,39 @@ extern crate tantivy;
 
 #[macro_use]
 extern crate failure;
+extern crate serde_derive;
 
+use actix_web::{
+    error, http, server::HttpServer, App, Error, FromRequest, HttpRequest, HttpResponse, Json,
+    State,
+};
 use common::{preprocess, register_tokenizer};
+use serde::Deserialize;
 use std::sync::Arc;
 use tantivy::collector::TopDocs;
 use tantivy::query::QueryParser;
 use tantivy::{Index, IndexReader, ReloadPolicy};
 
-use actix_web::{error, http, server, App, HttpRequest, HttpResponse};
-
 #[derive(Fail, Debug)]
 #[fail(display = "Search engine error")]
 struct SearchEngineError {
     name: String,
+}
+
+impl From<tantivy::Error> for SearchEngineError {
+    fn from(e: tantivy::Error) -> Self {
+        SearchEngineError {
+            name: format!("{:?}", e),
+        }
+    }
+}
+
+impl From<tantivy::query::QueryParserError> for SearchEngineError {
+    fn from(e: tantivy::query::QueryParserError) -> Self {
+        SearchEngineError {
+            name: format!("{:?}", e),
+        }
+    }
 }
 
 impl error::ResponseError for SearchEngineError {
@@ -63,26 +83,27 @@ impl SearchState {
     }
 }
 
-fn index(req: &HttpRequest<SearchState>) -> Result<HttpResponse, SearchEngineError> {
-    let state = req.state();
+#[derive(Deserialize)]
+struct PostInfo {
+    query: String,
+    topk: u64,
+}
+
+fn index(
+    (info, state): (Json<PostInfo>, State<SearchState>),
+) -> Result<HttpResponse, SearchEngineError> {
     let searcher = state.reader.searcher();
     let qtext = preprocess("WOW-флорист: AND Сырный БУМ");
     let query = match state.query_parser.parse_query(qtext.as_str()) {
         Ok(v) => v,
         Err(e) => {
-            return Err(SearchEngineError {
-                name: format!("{:?}", e),
-            })
+            return Err(SearchEngineError::from(e));
         }
     };
 
     let top_docs = match searcher.search(&query, &TopDocs::with_limit(10)) {
         Ok(v) => v,
-        Err(e) => {
-            return Err(SearchEngineError {
-                name: e.to_string(),
-            })
-        }
+        Err(e) => return Err(SearchEngineError::from(e)),
     };
 
     let schema = &state.schema;
@@ -90,11 +111,7 @@ fn index(req: &HttpRequest<SearchState>) -> Result<HttpResponse, SearchEngineErr
     for (_score, doc_address) in top_docs {
         let retrieved_doc = match searcher.doc(doc_address) {
             Ok(v) => v,
-            Err(e) => {
-                return Err(SearchEngineError {
-                    name: e.to_string(),
-                })
-            }
+            Err(e) => return Err(SearchEngineError::from(e)),
         };
 
         let mut doc_str = "[".to_string();
@@ -117,11 +134,10 @@ fn index(req: &HttpRequest<SearchState>) -> Result<HttpResponse, SearchEngineErr
 fn main() {
     let sys = actix::System::new("searcher");
 
-    server::HttpServer::new(|| {
+    HttpServer::new(|| {
         App::with_state(SearchState::new().unwrap())
-            .resource("/", |r| r.method(http::Method::GET).f(index))
+            .resource("/", |r| r.method(http::Method::POST).with(index))
     })
-    .workers(8)
     .bind("127.0.0.1:8088")
     .unwrap()
     .start();

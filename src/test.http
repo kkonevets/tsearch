@@ -3,7 +3,7 @@ POST http://188.120.254.29:80/ HTTP/2.0
 Content-Type: application/json
 
 {
-    "query":"Вязание крючком для начинающих. Видеокурс из 30 уроков",
+    "query":"(Тренинг Kak Bлюбитьcя и нe пoтеpять ceбя) AND (node_id:15)",
     "topk": 5
 }
 

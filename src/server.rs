@@ -7,7 +7,6 @@ extern crate tantivy;
 extern crate failure;
 
 use common::{preprocess, register_tokenizer};
-use std::cell::RefCell;
 use std::sync::Arc;
 use tantivy::collector::TopDocs;
 use tantivy::query::QueryParser;
@@ -30,9 +29,9 @@ impl error::ResponseError for SearchEngineError {
 }
 
 struct SearchState {
-    reader: Arc<RefCell<IndexReader>>,
-    query_parser: Arc<RefCell<QueryParser>>,
-    schema: Arc<RefCell<tantivy::schema::Schema>>,
+    reader: Arc<IndexReader>,
+    query_parser: Arc<QueryParser>,
+    schema: Arc<tantivy::schema::Schema>,
 }
 
 impl SearchState {
@@ -55,9 +54,9 @@ impl SearchState {
         let query_parser = QueryParser::for_index(&index, vec![title_t, text_t]);
 
         let state = SearchState {
-            reader: Arc::new(RefCell::new(reader)),
-            query_parser: Arc::new(RefCell::new(query_parser)),
-            schema: Arc::new(RefCell::new(schema)),
+            reader: Arc::new(reader),
+            query_parser: Arc::new(query_parser),
+            schema: Arc::new(schema),
         };
 
         Ok(state)
@@ -66,9 +65,9 @@ impl SearchState {
 
 fn index(req: &HttpRequest<SearchState>) -> Result<HttpResponse, SearchEngineError> {
     let state = req.state();
-    let searcher = state.reader.borrow().searcher();
+    let searcher = state.reader.searcher();
     let qtext = preprocess("WOW-флорист: AND Сырный БУМ");
-    let query = match state.query_parser.borrow().parse_query(qtext.as_str()) {
+    let query = match state.query_parser.parse_query(qtext.as_str()) {
         Ok(v) => v,
         Err(e) => {
             return Err(SearchEngineError {
@@ -86,7 +85,7 @@ fn index(req: &HttpRequest<SearchState>) -> Result<HttpResponse, SearchEngineErr
         }
     };
 
-    let schema = state.schema.borrow();
+    let schema = &state.schema;
     let mut docs = Vec::new();
     for (_score, doc_address) in top_docs {
         let retrieved_doc = match searcher.doc(doc_address) {
@@ -118,10 +117,11 @@ fn index(req: &HttpRequest<SearchState>) -> Result<HttpResponse, SearchEngineErr
 fn main() {
     let sys = actix::System::new("searcher");
 
-    server::new(|| {
+    server::HttpServer::new(|| {
         App::with_state(SearchState::new().unwrap())
             .resource("/", |r| r.method(http::Method::GET).f(index))
     })
+    .workers(8)
     .bind("127.0.0.1:8088")
     .unwrap()
     .start();

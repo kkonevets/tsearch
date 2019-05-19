@@ -1,0 +1,18 @@
+{
+    "sync-rsync.delete": true,
+    "sync-rsync.onSave": true,
+    "sync-rsync.exclude": [
+        "build",
+        "index",
+        "*.so",
+        "model",
+        "__pycache__",
+        "target"
+    ],
+    "sync-rsync.sites": [
+        {
+            "localPath": "/Users/guyos/Documents/ssergeev/",
+            "remotePath": "root@188.120.254.29:/root/ssergeev"
+        },
+    ],
+}

@@ -7,10 +7,7 @@ extern crate tantivy;
 extern crate failure;
 extern crate serde_derive;
 
-use actix_web::{
-    error, http, server::HttpServer, App, Error, FromRequest, HttpRequest, HttpResponse, Json,
-    State,
-};
+use actix_web::{error, http, server::HttpServer, App, HttpResponse, Json, State};
 use common::{preprocess, register_tokenizer};
 use serde::Deserialize;
 use std::sync::Arc;

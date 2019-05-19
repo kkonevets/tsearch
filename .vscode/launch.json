@@ -1,0 +1,212 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'common'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=ssergeev"
+                ],
+                "filter": {
+                    "name": "common",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'commit'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=commit",
+                    "--package=ssergeev"
+                ],
+                "filter": {
+                    "name": "commit",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'commit'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=commit",
+                    "--package=ssergeev"
+                ],
+                "filter": {
+                    "name": "commit",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'server'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=server",
+                    "--package=ssergeev"
+                ],
+                "filter": {
+                    "name": "server",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'server'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=server",
+                    "--package=ssergeev"
+                ],
+                "filter": {
+                    "name": "server",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'query'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=query",
+                    "--package=ssergeev"
+                ],
+                "filter": {
+                    "name": "query",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'query'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=query",
+                    "--package=ssergeev"
+                ],
+                "filter": {
+                    "name": "query",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'stem'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=stem",
+                    "--package=ssergeev"
+                ],
+                "filter": {
+                    "name": "stem",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'stem'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=stem",
+                    "--package=ssergeev"
+                ],
+                "filter": {
+                    "name": "stem",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'play'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=play",
+                    "--package=ssergeev"
+                ],
+                "filter": {
+                    "name": "play",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'play'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=play",
+                    "--package=ssergeev"
+                ],
+                "filter": {
+                    "name": "play",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

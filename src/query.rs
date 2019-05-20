@@ -31,10 +31,10 @@ fn main() -> tantivy::Result<()> {
         .reload_policy(ReloadPolicy::OnCommit)
         .try_into()?;
 
-    let title_t = schema.get_field("title").unwrap();
+    // let title_t = schema.get_field("title").unwrap();
     let text_t = schema.get_field("text").unwrap();
 
-    let query_parser = QueryParser::for_index(&index, vec![title_t, text_t]);
+    let query_parser = QueryParser::for_index(&index, vec![text_t]);
 
     println!(
         "index and metadata loaded in {} ms",
@@ -47,7 +47,7 @@ fn main() -> tantivy::Result<()> {
 
     let searcher = reader.searcher();
 
-    let qtext = preprocess("Тренинг Kak Bлюбитьcя и нe пoтеpять ceбя");
+    let qtext = preprocess("Оксана Лифенко");
     let query = query_parser.parse_query(qtext.as_str())?;
     let top_docs = searcher.search(&query, &TopDocs::with_limit(10))?;
 

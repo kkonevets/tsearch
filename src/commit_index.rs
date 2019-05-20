@@ -56,10 +56,14 @@ fn main() -> tantivy::Result<()> {
 
     println!("Indexing {} docs", results.len());
     for post in results {
+        let mut all_text = post.title.clone();
+        all_text.push_str(" ");
+        all_text.push_str(&post.text);
+
         index_writer.add_document(doc!(
             thread_id_t => post.thread_id,
             title_t => preprocess(&post.title),
-            text_t => preprocess(&post.text),
+            text_t => preprocess(&all_text),
             node_id_t => post.node_id,
             need_moder_t => post.needModer,
             post_date_t => post.post_date

@@ -65,10 +65,10 @@ impl SearchState {
             .reload_policy(ReloadPolicy::OnCommit)
             .try_into()?;
 
-        let title_t = schema.get_field("title").unwrap();
+        // let title_t = schema.get_field("title").unwrap();
         let text_t = schema.get_field("text").unwrap();
 
-        let query_parser = QueryParser::for_index(&index, vec![title_t, text_t]);
+        let query_parser = QueryParser::for_index(&index, vec![text_t]);
 
         let state = SearchState {
             reader: Arc::new(reader),

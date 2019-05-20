@@ -1,5 +1,5 @@
-# POST http://0.0.0.0:8088/ HTTP/2.0
-POST http://188.120.254.29:80/ HTTP/2.0
+# POST http://0.0.0.0:8080/ HTTP/2.0
+POST http://188.120.254.29:8080/ HTTP/2.0
 Content-Type: application/json
 
 {
@@ -8,10 +8,10 @@ Content-Type: application/json
 }
 
 
-GET http://188.120.254.29:80/ HTTP/2.0
+GET http://188.120.254.29:8080/ HTTP/2.0
 
 
 curl -d '{
     "query":"Вязание крючком для начинающих. Видеокурс из 30 уроков",
     "topk": 5
-}' -H "Content-Type: application/json" -X POST http://localhost:80/
+}' -H "Content-Type: application/json" -X POST http://localhost:8080/

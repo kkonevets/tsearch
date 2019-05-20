@@ -135,10 +135,10 @@ fn main() {
         App::with_state(SearchState::new().unwrap())
             .resource("/", |r| r.method(http::Method::POST).with(index))
     })
-    .bind("0.0.0.0:80")
+    .bind("0.0.0.0:8080")
     .unwrap()
     .start();
 
-    println!("Started http server: 0.0.0.0:80");
+    println!("Started http server: 0.0.0.0:8080");
     let _ = sys.run();
 }

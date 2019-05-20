@@ -56,9 +56,7 @@ fn index(
     let qtext = preprocess(info.query.as_str());
     let query = match state.query_parser.parse_query(qtext.as_str()) {
         Ok(v) => v,
-        Err(e) => {
-            return Err(SearchEngineError::from(e));
-        }
+        Err(e) => return Err(SearchEngineError::from(e)),
     };
 
     let top_docs = match searcher.search(&query, &TopDocs::with_limit(info.topk)) {

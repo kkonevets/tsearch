@@ -1,7 +1,6 @@
 #[macro_use]
 extern crate tantivy;
 extern crate diesel;
-
 extern crate tsearch;
 
 use std::fs;
@@ -9,7 +8,7 @@ use std::io::ErrorKind;
 use tantivy::schema::*;
 use tantivy::Index;
 
-use self::diesel::prelude::*;
+use diesel::prelude::*;
 use tsearch::models::*;
 use tsearch::*;
 

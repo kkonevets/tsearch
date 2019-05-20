@@ -3,12 +3,8 @@ extern crate tsearch;
 
 use std::time::Instant;
 use tantivy::collector::TopDocs;
-use tantivy::query::QueryParser;
-use tantivy::Index;
-use tantivy::ReloadPolicy;
-
+use tsearch::preprocess;
 use tsearch::state::SearchState;
-use tsearch::{preprocess, register_tokenizer};
 
 fn main() -> tantivy::Result<()> {
     let now = Instant::now();

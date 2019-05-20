@@ -1,5 +1,6 @@
 pub mod models;
 pub mod schema;
+pub mod state;
 
 use tantivy::tokenizer::*;
 use tantivy::Index;

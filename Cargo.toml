@@ -1,12 +1,8 @@
 [package]
-name = "ssergeev"
+name = "tsearch"
 version = "0.1.0"
 authors = ["Kirill Konevets <kkonevets@gmail.com>"]
 edition = "2018"
-
-[lib]
-name = "common"
-path = "src/lib.rs"
 
 [dependencies]
 tantivy = "^0.9"

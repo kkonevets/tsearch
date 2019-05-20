@@ -1,19 +1,17 @@
 extern crate actix;
 extern crate actix_web;
-extern crate common;
 extern crate tantivy;
+extern crate tsearch;
 
 #[macro_use]
 extern crate failure;
 extern crate serde_derive;
 
 use actix_web::{error, http, server::HttpServer, App, HttpResponse, Json, State};
-use common::{preprocess, register_tokenizer};
 use serde::Deserialize;
-use std::sync::Arc;
 use tantivy::collector::TopDocs;
-use tantivy::query::QueryParser;
-use tantivy::{Index, IndexReader, ReloadPolicy};
+use tsearch::preprocess;
+use tsearch::state::SearchState;
 
 #[derive(Fail, Debug)]
 #[fail(display = "Search engine error")]
@@ -42,41 +40,6 @@ impl error::ResponseError for SearchEngineError {
         HttpResponse::InternalServerError()
             .content_type("text/html")
             .body(&self.name)
-    }
-}
-
-struct SearchState {
-    reader: Arc<IndexReader>,
-    query_parser: Arc<QueryParser>,
-    schema: Arc<tantivy::schema::Schema>,
-}
-
-impl SearchState {
-    pub fn new() -> Result<SearchState, tantivy::TantivyError> {
-        let index_path = "./index";
-
-        let index = Index::open_in_dir(index_path)?;
-        register_tokenizer(&index);
-
-        let schema = index.schema();
-
-        let reader = index
-            .reader_builder()
-            .reload_policy(ReloadPolicy::OnCommit)
-            .try_into()?;
-
-        // let title_t = schema.get_field("title").unwrap();
-        let text_t = schema.get_field("text").unwrap();
-
-        let query_parser = QueryParser::for_index(&index, vec![text_t]);
-
-        let state = SearchState {
-            reader: Arc::new(reader),
-            query_parser: Arc::new(query_parser),
-            schema: Arc::new(schema),
-        };
-
-        Ok(state)
     }
 }
 

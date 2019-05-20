@@ -1,4 +1,4 @@
-extern crate common;
+extern crate tsearch;
 extern crate tantivy;
 
 use std::time::Instant;
@@ -7,7 +7,7 @@ use tantivy::query::QueryParser;
 use tantivy::Index;
 use tantivy::ReloadPolicy;
 
-use common::{preprocess, register_tokenizer};
+use tsearch::{preprocess, register_tokenizer};
 
 fn main() -> tantivy::Result<()> {
     let now = Instant::now();

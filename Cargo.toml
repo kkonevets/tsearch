@@ -8,26 +8,6 @@ edition = "2018"
 name = "common"
 path = "src/lib.rs"
 
-[[bin]]
-name = "commit"
-path = "src/commit_index.rs"
-
-[[bin]]
-name = "server"
-path = "src/server.rs"
-
-[[bin]]
-name = "query"
-path = "src/query.rs"
-
-[[bin]]
-name = "stem"
-path = "src/stem.rs"
-
-[[bin]]
-name = "play"
-path = "src/play.rs"
-
 [dependencies]
 tantivy = "^0.9"
 tempdir = "0.3.7"

@@ -90,16 +90,18 @@ fn index(
 }
 
 fn main() {
+    let host = "0.0.0.0:8080";
+
     let sys = actix::System::new("searcher");
 
     HttpServer::new(|| {
         App::with_state(SearchState::new().unwrap())
             .resource("/", |r| r.method(http::Method::POST).with(index))
     })
-    .bind("0.0.0.0:8080")
+    .bind(host)
     .unwrap()
     .start();
 
-    println!("Started http server: 0.0.0.0:8080");
+    println!("Started http server: {}", host);
     let _ = sys.run();
 }

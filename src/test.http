@@ -1,9 +1,9 @@
 # POST http://0.0.0.0:8080/ HTTP/2.0
-POST http://188.120.254.29:8080/ HTTP/2.0
+POST http://localhost:8080/ HTTP/2.0
 Content-Type: application/json
 
 {
-    "query":"(Тренинг Kak Bлюбитьcя и нe пoтеpять ceбя) AND (node_id:15)",
+    "query":"Оксана Лифенко",
     "topk": 5
 }
 

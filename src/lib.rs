@@ -183,9 +183,9 @@ pub fn register_tokenizer(index: &Index) {
         let stopwords_vec = stopwords.into_iter().map(|w| w.to_string()).collect();
 
         let ru_stem = SimpleTokenizer
-                .filter(StopWordFilter::remove(stopwords_vec))
                 .filter(RemoveLongFilter::limit(40))
                 .filter(LowerCaser)
+                .filter(StopWordFilter::remove(stopwords_vec))
                 .filter(Stemmer::new(Language::Russian));
 
         index.tokenizers().register("ru_stem", ru_stem);

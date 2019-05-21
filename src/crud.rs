@@ -24,4 +24,10 @@ fn doc_by_id(reader: &IndexReader, isbn_term: &Term) -> tantivy::Result<Option<D
     }
 }
 
-fn add() {}
+// fn add(post: &models::Post, rewrite: bool) {
+//     let mut index_writer = index.writer(50_000_000)?;
+//     index_writer.add_document(doc!(
+//            title => "Frankenstein",
+//            isbn => "978-9176370711",
+//     ));
+// }

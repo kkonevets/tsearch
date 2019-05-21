@@ -12,10 +12,7 @@ pub struct SearchState {
 
 impl SearchState {
     pub fn new() -> Result<SearchState, tantivy::TantivyError> {
-        let index_path = "./index";
-
-        let index = Index::open_in_dir(index_path)?;
-        register_tokenizer(&index);
+        let index = load_index()?;
 
         let schema = index.schema();
 
@@ -38,4 +35,12 @@ impl SearchState {
 
         Ok(state)
     }
+}
+
+fn load_index() -> Result<Index, tantivy::TantivyError> {
+    let index_path = "./index";
+
+    let index = Index::open_in_dir(index_path)?;
+    register_tokenizer(&index);
+    Ok(index)
 }

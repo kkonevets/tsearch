@@ -1,3 +1,4 @@
+pub mod crud;
 pub mod models;
 pub mod schema;
 pub mod state;
@@ -8,6 +9,9 @@ use tantivy::Index;
 #[macro_use]
 extern crate diesel;
 extern crate dotenv;
+
+#[macro_use]
+extern crate tantivy;
 
 use diesel::mysql::MysqlConnection;
 use diesel::prelude::*;

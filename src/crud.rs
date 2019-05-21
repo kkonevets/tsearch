@@ -4,7 +4,7 @@ use tantivy::schema::*;
 use tantivy::Index;
 use tantivy::IndexReader;
 
-fn doc_by_id(reader: &IndexReader, isbn_term: &Term) -> tantivy::Result<Option<Document>> {
+pub fn doc_by_id(reader: &IndexReader, isbn_term: &Term) -> tantivy::Result<Option<Document>> {
     let searcher = reader.searcher();
 
     // This is the simplest query you can think of.

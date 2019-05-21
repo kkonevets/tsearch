@@ -4,6 +4,7 @@ use tantivy::query::QueryParser;
 use tantivy::{Index, IndexReader, ReloadPolicy};
 
 pub struct SearchState {
+    pub index: Arc<Index>,
     pub reader: Arc<IndexReader>,
     pub query_parser: Arc<QueryParser>,
     pub schema: Arc<tantivy::schema::Schema>,
@@ -29,6 +30,7 @@ impl SearchState {
         let query_parser = QueryParser::for_index(&index, vec![text_t]);
 
         let state = SearchState {
+            index: Arc::new(index),
             reader: Arc::new(reader),
             query_parser: Arc::new(query_parser),
             schema: Arc::new(schema),

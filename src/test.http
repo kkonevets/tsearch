@@ -3,7 +3,7 @@ POST http://localhost:8080/search HTTP/2.0
 Content-Type: application/json
 
 {
-    "query":"Оксана Лифенко",
+    "query":"thread_id:1329",
     "topk": 5
 }
 
@@ -17,7 +17,7 @@ Content-Type: application/json
     "delete": true,
     "post": 
         {
-            "thread_id": 164461,
+            "thread_id": 1332,
             "title": "",
             "text": "",
             "node_id": 0,

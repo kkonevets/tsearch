@@ -106,7 +106,7 @@ fn modify_index(
     let thread_id_f = schema.get_field("thread_id").unwrap();
     let thread_id_term = Term::from_field_i64(thread_id_f, info.post.thread_id);
 
-    let mut index_writer = state.index.writer(10_000_000)?;
+    let mut index_writer = state.index.writer_with_num_threads(1, 5_000_000)?;
 
     if info.delete {
         index_writer.delete_term(thread_id_term.clone());

@@ -10,7 +10,6 @@ use tantivy::Index;
 extern crate diesel;
 extern crate dotenv;
 
-#[macro_use]
 extern crate tantivy;
 
 use diesel::mysql::MysqlConnection;

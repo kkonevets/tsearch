@@ -10,11 +10,8 @@ extern crate serde_derive;
 use actix_web::{error, http, server::HttpServer, App, HttpResponse, Json, State};
 use serde::Deserialize;
 use tantivy::collector::TopDocs;
-use tsearch::models::Post;
 use tsearch::preprocess;
 use tsearch::state::SearchState;
-
-use std::sync::mpsc;
 
 #[derive(Fail, Debug)]
 #[fail(display = "Search engine error")]
@@ -96,8 +93,6 @@ fn main() {
     let host = "0.0.0.0:8080";
 
     let sys = actix::System::new("searcher");
-
-    let (tx, rx) = mpsc::channel::<Post>();
 
     HttpServer::new(|| {
         App::with_state(SearchState::new().unwrap())

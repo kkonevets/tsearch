@@ -10,6 +10,8 @@ extern crate serde_derive;
 use actix_web::{error, http, server::HttpServer, App, HttpResponse, Json, State};
 use serde::Deserialize;
 use tantivy::collector::TopDocs;
+use tantivy::schema::Term;
+use tsearch::models::Post;
 use tsearch::preprocess;
 use tsearch::state::SearchState;
 
@@ -44,13 +46,13 @@ impl error::ResponseError for SearchEngineError {
 }
 
 #[derive(Deserialize)]
-struct PostInfo {
+struct SearchInfo {
     query: String,
     topk: usize,
 }
 
-fn index(
-    (info, state): (Json<PostInfo>, State<SearchState>),
+fn search_index(
+    (info, state): (Json<SearchInfo>, State<SearchState>),
 ) -> Result<HttpResponse, SearchEngineError> {
     let searcher = state.reader.searcher();
     let qtext = preprocess(info.query.as_str());
@@ -89,14 +91,48 @@ fn index(
         .body(result))
 }
 
+#[derive(Deserialize)]
+struct ModifyInfo {
+    overwrite: bool,
+    delete: bool,
+    post: Post,
+}
+
+fn modify_index(
+    (info, state): (Json<ModifyInfo>, State<SearchState>),
+) -> Result<HttpResponse, SearchEngineError> {
+    let schema = &state.schema;
+
+    let thread_id_f = schema.get_field("thread_id").unwrap();
+    let thread_id_term = Term::from_field_i64(thread_id_f, info.post.thread_id);
+
+    let mut index_writer = state.index.writer(10_000_000)?;
+
+    if info.delete {
+        index_writer.delete_term(thread_id_term.clone());
+    }
+
+    index_writer.commit()?;
+
+    Ok(HttpResponse::Ok()
+        .content_type("application/json")
+        .body("{\"sucess\": true}"))
+}
+
 fn main() {
     let host = "0.0.0.0:8080";
 
     let sys = actix::System::new("searcher");
 
     HttpServer::new(|| {
-        App::with_state(SearchState::new().unwrap())
-            .resource("/", |r| r.method(http::Method::POST).with(index))
+        vec![
+            App::with_state(SearchState::new().unwrap())
+                .prefix("/search")
+                .resource("", |r| r.method(http::Method::POST).with(search_index)),
+            App::with_state(SearchState::new().unwrap())
+                .prefix("/modify")
+                .resource("", |r| r.method(http::Method::POST).with(modify_index)),
+        ]
     })
     .bind(host)
     .unwrap()

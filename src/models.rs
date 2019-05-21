@@ -1,4 +1,4 @@
-#[derive(Queryable)]
+#[derive(Queryable, Deserialize)]
 pub struct Post {
     pub thread_id: i64,
     pub title: String,

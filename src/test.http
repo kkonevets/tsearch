@@ -3,7 +3,7 @@ POST http://localhost:8080/search HTTP/2.0
 Content-Type: application/json
 
 {
-    "query":"title:Joomla title:Drupal",
+    "query":"thread_id:24",
     "topk": 10
 }
 
@@ -14,11 +14,11 @@ Content-Type: application/json
 
 [
     {
-        "overwrite":false,
+        "overwrite":true,
         "delete": false,
         "post": 
             {
-                "thread_id": 14495555,
+                "thread_id": 24,
                 "title": "eee",
                 "text": "!!!",
                 "node_id": 0,

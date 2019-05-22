@@ -1,6 +1,5 @@
 extern crate actix;
 extern crate actix_web;
-#[macro_use]
 extern crate tantivy;
 extern crate tsearch;
 

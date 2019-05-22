@@ -1,7 +1,7 @@
 use super::register_tokenizer;
-use std::sync::{Arc, RwLock};
+use std::sync::Arc;
 use tantivy::query::QueryParser;
-use tantivy::{Index, IndexReader, IndexWriter, ReloadPolicy};
+use tantivy::{Index, IndexReader, ReloadPolicy};
 
 #[derive(Clone)]
 pub struct SearchState {

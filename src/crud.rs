@@ -3,7 +3,6 @@ use super::preprocess;
 use tantivy::collector::TopDocs;
 use tantivy::query::TermQuery;
 use tantivy::schema::*;
-use tantivy::Index;
 use tantivy::{IndexReader, IndexWriter};
 
 pub fn doc_by_id(reader: &IndexReader, term: &Term) -> tantivy::Result<Option<Document>> {

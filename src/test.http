@@ -1,10 +1,10 @@
-# POST http://0.0.0.0:8080/ HTTP/2.0
+
 POST http://localhost:8080/search HTTP/2.0
 Content-Type: application/json
 
 {
-    "query":"thread_id:1405",
-    "topk": 5
+    "query":"title:(Joomla Drupal)",
+    "topk": 50
 }
 
 ###
@@ -15,12 +15,12 @@ Content-Type: application/json
 [
     {
         "overwrite":false,
-        "delete": true,
+        "delete": false,
         "post": 
             {
-                "thread_id": 1405,
-                "title": "",
-                "text": "",
+                "thread_id": 14495555,
+                "title": "eee",
+                "text": "!!!",
                 "node_id": 0,
                 "needModer": 0,
                 "post_date": 0

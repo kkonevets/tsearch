@@ -104,14 +104,11 @@ fn modify_index(
 ) -> Result<HttpResponse, SearchEngineError> {
     let schema = &state.schema;
 
-    let mut writer = match state.index.writer(50_000_000) {
-        Ok(v) => v,
-        Err(e) => return Err(SearchEngineError::from(e)),
-    };
-
     let tpost = TantivyPost::new(&schema);
 
     // std::thread::sleep(std::time::Duration::from_secs(30));
+
+    let mut writer = state.writer.lock().unwrap();
 
     for record in &info.into_inner() {
         let post = &record.post;

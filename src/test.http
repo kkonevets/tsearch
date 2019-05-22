@@ -19,7 +19,7 @@ Content-Type: application/json
         "post": 
             {
                 "thread_id": 24,
-                "title": "eee1",
+                "title": "fff",
                 "text": "!!!",
                 "node_id": 0,
                 "needModer": 0,

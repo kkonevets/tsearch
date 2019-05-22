@@ -1,12 +1,14 @@
 use super::register_tokenizer;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 use tantivy::query::QueryParser;
-use tantivy::{Index, IndexReader, ReloadPolicy};
+use tantivy::{Index, IndexReader, IndexWriter, ReloadPolicy};
 
 #[derive(Clone)]
 pub struct SearchState {
     pub index: Arc<Index>,
     pub reader: Arc<IndexReader>,
+    pub writer: Arc<Mutex<IndexWriter>>,
+
     pub query_parser: Arc<QueryParser>,
     pub schema: Arc<tantivy::schema::Schema>,
 }
@@ -35,9 +37,12 @@ impl SearchState {
 
         let query_parser = QueryParser::for_index(&index, vec![text_t]);
 
+        let writer = index.writer(50_000_000)?;
+
         let state = SearchState {
             index: Arc::new(index),
             reader: Arc::new(reader),
+            writer: Arc::new(Mutex::new(writer)),
             query_parser: Arc::new(query_parser),
             schema: Arc::new(schema),
         };
@@ -45,27 +50,3 @@ impl SearchState {
         Ok(state)
     }
 }
-
-// #[derive(Clone)]
-// pub struct ModifyState {
-//     pub index: Arc<Index>,
-//     pub writer: Arc<RwLock<IndexWriter>>,
-//     pub schema: Arc<tantivy::schema::Schema>,
-// }
-
-// impl ModifyState {
-//     pub fn new() -> Result<ModifyState, tantivy::TantivyError> {
-//         let index = load_index()?;
-
-//         let writer = index.writer_with_num_threads(1, 5_000_000)?;
-//         let schema = index.schema();
-
-//         let state = ModifyState {
-//             index: Arc::new(index),
-//             writer: Arc::new(RwLock::new(writer)),
-//             schema: Arc::new(schema),
-//         };
-
-//         Ok(state)
-//     }
-// }

@@ -1,5 +1,6 @@
 extern crate actix;
 extern crate actix_web;
+#[macro_use]
 extern crate tantivy;
 extern crate tsearch;
 
@@ -11,6 +12,7 @@ use actix_web::{error, http, server::HttpServer, App, HttpResponse, Json, State}
 use serde::Deserialize;
 use tantivy::collector::TopDocs;
 use tantivy::schema::Term;
+use tsearch::crud::doc_by_id;
 use tsearch::models::Post;
 use tsearch::preprocess;
 use tsearch::state::SearchState;
@@ -95,7 +97,7 @@ fn search_index(
 struct ModifyInfo {
     overwrite: bool,
     delete: bool,
-    post: Post,
+    posts: std::vec::Vec<Post>,
 }
 
 fn modify_index(
@@ -103,21 +105,47 @@ fn modify_index(
 ) -> Result<HttpResponse, SearchEngineError> {
     let schema = &state.schema;
 
-    let thread_id_f = schema.get_field("thread_id").unwrap();
-    let thread_id_term = Term::from_field_i64(thread_id_f, info.post.thread_id);
-
-    let mut writer = match state.index.writer_with_num_threads(1, 5_000_000) {
+    let mut writer = match state.index.writer(50_000_000) {
         Ok(v) => v,
         Err(e) => return Err(SearchEngineError::from(e)),
     };
 
-    std::thread::sleep(std::time::Duration::from_secs(30));
+    let thread_id_f = schema.get_field("thread_id").unwrap();
+    let title_f = schema.get_field("title").unwrap();
+    let text_f = schema.get_field("text").unwrap();
+    let node_id_f = schema.get_field("node_id").unwrap();
+    let need_moder_f = schema.get_field("need_moder_id").unwrap();
+    let post_date_f = schema.get_field("post_date_id").unwrap();
 
-    if info.delete {
-        writer.delete_term(thread_id_term.clone());
-    } else {
-        if info.overwrite {
+    // std::thread::sleep(std::time::Duration::from_secs(30));
+
+    for post in &info.posts {
+        let thread_id_term = Term::from_field_i64(thread_id_f, post.thread_id);
+
+        if info.delete {
+            writer.delete_term(thread_id_term.clone());
         } else {
+            match doc_by_id(&state.reader, &thread_id_term)? {
+                Some(_) => {
+                    if info.overwrite {
+                        writer.delete_term(thread_id_term.clone());
+                    } else {
+                        // document already exists, do nothing
+                        continue;
+                    }
+                }
+                None => (),
+            };
+
+            writer.add_document(doc!(
+                thread_id_f => post.thread_id,
+                title_f => preprocess(&post.title),
+                text_f => preprocess(&post.text),
+                node_id_f => post.node_id,
+                need_moder_f => post.needModer,
+                post_date_f => post.post_date
+
+            ));
         }
     }
 

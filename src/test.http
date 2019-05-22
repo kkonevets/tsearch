@@ -3,7 +3,7 @@ POST http://localhost:8080/search HTTP/2.0
 Content-Type: application/json
 
 {
-    "query":"thread_id:1374",
+    "query":"thread_id:1405",
     "topk": 5
 }
 
@@ -12,21 +12,21 @@ Content-Type: application/json
 POST http://localhost:8080/modify HTTP/2.0
 Content-Type: application/json
 
-{
-    "overwrite":false,
-    "delete": true,
-    "posts": 
-        [
+[
+    {
+        "overwrite":false,
+        "delete": true,
+        "post": 
             {
-                "thread_id": 1374,
+                "thread_id": 1405,
                 "title": "",
                 "text": "",
                 "node_id": 0,
                 "needModer": 0,
                 "post_date": 0
             }
-        ]
-}
+    }
+]
 
 ###
 

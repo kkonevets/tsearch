@@ -13,7 +13,7 @@ use tantivy::collector::TopDocs;
 use tantivy::schema::Term;
 use tsearch::models::Post;
 use tsearch::preprocess;
-use tsearch::state::{ModifyState, SearchState};
+use tsearch::state::SearchState;
 
 #[derive(Fail, Debug)]
 #[fail(display = "Search engine error")]
@@ -99,29 +99,29 @@ struct ModifyInfo {
 }
 
 fn modify_index(
-    (info, state): (Json<ModifyInfo>, State<ModifyState>),
+    (info, state): (Json<ModifyInfo>, State<SearchState>),
 ) -> Result<HttpResponse, SearchEngineError> {
     let schema = &state.schema;
 
-    // let thread_id_f = schema.get_field("thread_id").unwrap();
-    // let thread_id_term = Term::from_field_i64(thread_id_f, info.post.thread_id);
+    let thread_id_f = schema.get_field("thread_id").unwrap();
+    let thread_id_term = Term::from_field_i64(thread_id_f, info.post.thread_id);
 
-    // // let mut index_writer = match state.index.writer_with_num_threads(1, 5_000_000) {
-    // //     Ok(v) => v,
-    // //     Err(e) => return Err(SearchEngineError::from(e)),
-    // // };
+    let mut writer = match state.index.writer_with_num_threads(1, 5_000_000) {
+        Ok(v) => v,
+        Err(e) => return Err(SearchEngineError::from(e)),
+    };
 
-    // // std::thread::sleep(std::time::Duration::from_secs(30));
+    std::thread::sleep(std::time::Duration::from_secs(30));
 
-    // if info.delete {
-    //     state.writer.delete_term(thread_id_term.clone());
-    // } else {
-    //     if info.overwrite {
-    //     } else {
-    //     }
-    // }
+    if info.delete {
+        writer.delete_term(thread_id_term.clone());
+    } else {
+        if info.overwrite {
+        } else {
+        }
+    }
 
-    // state.writer.commit()?;
+    writer.commit()?;
 
     Ok(HttpResponse::Ok()
         .content_type("application/json")
@@ -132,14 +132,15 @@ fn main() {
     let host = "0.0.0.0:8080";
 
     let sys = actix::System::new("searcher");
+    let search_state = SearchState::new().unwrap();
 
-    HttpServer::new(|| {
+    HttpServer::new(move || {
         vec![
-            App::with_state(SearchState::new().unwrap())
+            App::with_state(search_state.clone())
                 .prefix("/search")
                 .resource("", |r| r.method(http::Method::POST).with(search_index))
                 .boxed(),
-            App::with_state(ModifyState::new().unwrap())
+            App::with_state(search_state.clone())
                 .prefix("/modify")
                 .resource("", |r| r.method(http::Method::POST).with(modify_index))
                 .boxed(),

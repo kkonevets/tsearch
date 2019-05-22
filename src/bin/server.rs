@@ -13,7 +13,7 @@ use tantivy::collector::TopDocs;
 use tantivy::schema::Term;
 use tsearch::models::Post;
 use tsearch::preprocess;
-use tsearch::state::SearchState;
+use tsearch::state::{ModifyState, SearchState};
 
 #[derive(Fail, Debug)]
 #[fail(display = "Search engine error")]
@@ -99,7 +99,7 @@ struct ModifyInfo {
 }
 
 fn modify_index(
-    (info, state): (Json<ModifyInfo>, State<SearchState>),
+    (info, state): (Json<ModifyInfo>, State<ModifyState>),
 ) -> Result<HttpResponse, SearchEngineError> {
     let schema = &state.schema;
 
@@ -137,10 +137,12 @@ fn main() {
         vec![
             App::with_state(SearchState::new().unwrap())
                 .prefix("/search")
-                .resource("", |r| r.method(http::Method::POST).with(search_index)),
-            App::with_state(SearchState::new().unwrap())
+                .resource("", |r| r.method(http::Method::POST).with(search_index))
+                .boxed(),
+            App::with_state(ModifyState::new().unwrap())
                 .prefix("/modify")
-                .resource("", |r| r.method(http::Method::POST).with(modify_index)),
+                .resource("", |r| r.method(http::Method::POST).with(modify_index))
+                .boxed(),
         ]
     })
     .bind(host)

@@ -1,10 +1,12 @@
+use super::models::Post;
+use super::preprocess;
 use tantivy::collector::TopDocs;
 use tantivy::query::TermQuery;
 use tantivy::schema::*;
 use tantivy::Index;
-use tantivy::IndexReader;
+use tantivy::{IndexReader, IndexWriter};
 
-pub fn doc_by_id(reader: &IndexReader, isbn_term: &Term) -> tantivy::Result<Option<Document>> {
+pub fn doc_by_id(reader: &IndexReader, term: &Term) -> tantivy::Result<Option<Document>> {
     let searcher = reader.searcher();
 
     // This is the simplest query you can think of.
@@ -12,7 +14,7 @@ pub fn doc_by_id(reader: &IndexReader, isbn_term: &Term) -> tantivy::Result<Opti
     //
     // The second argument is here to tell we don't care about decoding positions,
     // or term frequencies.
-    let term_query = TermQuery::new(isbn_term.clone(), IndexRecordOption::Basic);
+    let term_query = TermQuery::new(term.clone(), IndexRecordOption::Basic);
     let top_docs = searcher.search(&term_query, &TopDocs::with_limit(1))?;
 
     if let Some((_score, doc_address)) = top_docs.first() {
@@ -24,10 +26,40 @@ pub fn doc_by_id(reader: &IndexReader, isbn_term: &Term) -> tantivy::Result<Opti
     }
 }
 
-// fn add(post: &models::Post, rewrite: bool) {
-//     let mut index_writer = index.writer(50_000_000)?;
-//     index_writer.add_document(doc!(
-//            title => "Frankenstein",
-//            isbn => "978-9176370711",
-//     ));
-// }
+pub struct TantivyPost {
+    pub thread_id_f: Field,
+    pub title_f: Field,
+    pub text_f: Field,
+    pub node_id_f: Field,
+    pub need_moder_f: Field,
+    pub post_date_f: Field,
+}
+
+impl TantivyPost {
+    pub fn new(schema: &Schema) -> TantivyPost {
+        let post = TantivyPost {
+            thread_id_f: schema.get_field("thread_id").unwrap(),
+            title_f: schema.get_field("title").unwrap(),
+            text_f: schema.get_field("text").unwrap(),
+            node_id_f: schema.get_field("node_id").unwrap(),
+            need_moder_f: schema.get_field("need_moder_id").unwrap(),
+            post_date_f: schema.get_field("post_date_id").unwrap(),
+        };
+        post
+    }
+
+    pub fn add(&self, post: &Post, writer: &mut IndexWriter) {
+        let mut all_text = post.title.clone();
+        all_text.push_str(" ");
+        all_text.push_str(&post.text);
+
+        writer.add_document(doc!(
+            self.thread_id_f => post.thread_id,
+            self.title_f => preprocess(&post.title),
+            self.text_f => preprocess(&all_text),
+            self.node_id_f => post.node_id,
+            self.need_moder_f => post.needModer,
+            self.post_date_f => post.post_date
+        ));
+    }
+}

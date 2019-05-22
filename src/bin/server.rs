@@ -160,7 +160,7 @@ fn main() {
                 .resource("", |r| {
                     r.method(http::Method::POST)
                         .with_config(modify_index, |cfg| {
-                            cfg.0 .0.limit(100_000_00000); // <- limit size of the payload to 10Gb
+                            cfg.0 .0.limit(10_000_000_000); // <- limit size of the payload to 10Gb
                         })
                 })
                 .boxed(),

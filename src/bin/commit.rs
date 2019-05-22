@@ -34,8 +34,8 @@ fn main() -> tantivy::Result<()> {
     schema_builder.add_text_field("title", text_options.clone() | STORED);
     schema_builder.add_text_field("text", text_options.clone());
     schema_builder.add_i64_field("node_id", INDEXED);
-    schema_builder.add_i64_field("need_moder_id", INDEXED);
-    schema_builder.add_i64_field("post_date_id", INDEXED);
+    schema_builder.add_i64_field("needModer", INDEXED);
+    schema_builder.add_i64_field("post_date", INDEXED);
 
     let schema = schema_builder.build();
     let index = Index::create_in_dir(index_path, schema.clone())?;

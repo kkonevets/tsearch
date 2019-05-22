@@ -3,8 +3,8 @@ POST http://localhost:8080/search HTTP/2.0
 Content-Type: application/json
 
 {
-    "query":"title:(Joomla Drupal)",
-    "topk": 50
+    "query":"title:Joomla title:Drupal",
+    "topk": 10
 }
 
 ###

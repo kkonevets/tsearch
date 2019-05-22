@@ -41,8 +41,8 @@ impl TantivyPost {
             title_f: schema.get_field("title").unwrap(),
             text_f: schema.get_field("text").unwrap(),
             node_id_f: schema.get_field("node_id").unwrap(),
-            need_moder_f: schema.get_field("need_moder_id").unwrap(),
-            post_date_f: schema.get_field("post_date_id").unwrap(),
+            need_moder_f: schema.get_field("needModer").unwrap(),
+            post_date_f: schema.get_field("post_date").unwrap(),
         };
         post
     }

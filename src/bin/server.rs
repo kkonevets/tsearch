@@ -157,7 +157,12 @@ fn main() {
                 .boxed(),
             App::with_state(search_state.clone())
                 .prefix("/modify")
-                .resource("", |r| r.method(http::Method::POST).with(modify_index))
+                .resource("", |r| {
+                    r.method(http::Method::POST)
+                        .with_config(modify_index, |cfg| {
+                            cfg.0 .0.limit(100_000_000); // <- limit size of the payload to 100Mb
+                        })
+                })
                 .boxed(),
         ]
     })

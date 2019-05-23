@@ -3,7 +3,7 @@ POST http://localhost:8080/search HTTP/2.0
 Content-Type: application/json
 
 {
-    "query":"thread_id:24",
+    "query":"thread_id:273",
     "topk": 10
 }
 
@@ -18,7 +18,7 @@ Content-Type: application/json
         "delete": false,
         "post": 
             {
-                "thread_id": 24,
+                "thread_id": 273,
                 "title": "fff",
                 "text": "!!!",
                 "node_id": 0,

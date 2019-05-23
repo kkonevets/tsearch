@@ -106,9 +106,9 @@ fn modify_index(
 
     let tpost = TantivyPost::new(&schema);
 
-    // std::thread::sleep(std::time::Duration::from_secs(30));
-
     let mut writer = state.writer.lock().unwrap();
+
+    // std::thread::sleep(std::time::Duration::from_secs(20));
 
     for record in &info.into_inner() {
         let post = &record.post;

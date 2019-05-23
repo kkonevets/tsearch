@@ -8,7 +8,6 @@ pub struct SearchState {
     pub index: Arc<Index>,
     pub reader: Arc<IndexReader>,
     pub writer: Arc<Mutex<IndexWriter>>,
-
     pub query_parser: Arc<QueryParser>,
     pub schema: Arc<tantivy::schema::Schema>,
 }

@@ -1,5 +1,5 @@
 
-POST http://188.120.254.29:8080/search 
+POST http://localhost:8080/search 
 Content-Type: application/json
 
 {
@@ -9,14 +9,14 @@ Content-Type: application/json
 
 ###
 
-POST http://188.120.254.29:8080/modify HTTP/2.0
+POST http://localhost:8080/modify HTTP/2.0
 Content-Type: application/json
 Accept-Encoding: gzip
 
 [
     {
         "overwrite":true,
-        "delete": true,
+        "delete": false,
         "doc": 
             {
                 "thread_id": 273,
@@ -31,7 +31,7 @@ Accept-Encoding: gzip
 
 ###
 
-POST http://188.120.254.29:8080/drop HTTP/2.0
+POST http://localhost:8080/drop HTTP/2.0
 
 
 ###

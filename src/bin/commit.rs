@@ -14,12 +14,17 @@ use tsearch::*;
 
 fn main() -> tantivy::Result<()> {
     let index_path = "./index";
-    match fs::create_dir(index_path) {
+    match fs::remove_dir_all(index_path) {
         Ok(_) => (),
-        Err(error) => match error.kind() {
-            ErrorKind::AlreadyExists => (),
+        Err(e) => match e.kind() {
+            ErrorKind::NotFound => (),
             other_error => panic!(other_error),
         },
+    }
+
+    match fs::create_dir(index_path) {
+        Ok(_) => (),
+        Err(error) => panic!(error.to_string()),
     }
 
     let text_options = TextOptions::default().set_indexing_options(

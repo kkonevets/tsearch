@@ -177,10 +177,9 @@ fn drop_index(req: &HttpRequest<SearchState>) -> Result<HttpResponse, SearchEngi
         state.reader.reload()?;
     }
 
-    // finally collect garbage
-    let mut writer = state.writer.lock().unwrap();
-    writer.garbage_collect_files()?;
-    writer.commit()?;
+    // // finally collect garbage
+    // let mut writer = state.writer.lock().unwrap();
+    // writer.garbage_collect_files()?;
 
     Ok(HttpResponse::Ok()
         .content_type("application/json")

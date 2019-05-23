@@ -96,7 +96,7 @@ fn search_index(
 struct ModifyInfo {
     overwrite: bool,
     delete: bool,
-    post: Post,
+    doc: Post,
 }
 
 fn modify_index(
@@ -111,7 +111,7 @@ fn modify_index(
     // std::thread::sleep(std::time::Duration::from_secs(20));
 
     for record in &info.into_inner() {
-        let post = &record.post;
+        let post = &record.doc;
         let thread_id_term = Term::from_field_i64(tpost.thread_id_f, post.thread_id);
 
         if record.delete {
@@ -250,7 +250,7 @@ mod tests {
             let mut items = Vec::new();
             for post in results {
                 let item = ModifyInfo {
-                    post: post,
+                    doc: post,
                     overwrite: true,
                     delete: false,
                 };
@@ -262,7 +262,7 @@ mod tests {
 
             let req = Request::builder()
                 .method("POST")
-                .uri("http://localhost:8080/modify")
+                .uri("http://188.120.254.29:8080/modify")
                 .header("Content-Type", "application/json")
                 .header("Accept-Encoding", "gzip")
                 .body(Body::from(body))

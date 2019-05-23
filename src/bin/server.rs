@@ -7,7 +7,7 @@ extern crate tsearch;
 extern crate failure;
 extern crate serde_derive;
 
-use actix_web::{error, http, server::HttpServer, App, HttpResponse, Json, State};
+use actix_web::{error, http, server::HttpServer, App, HttpRequest, HttpResponse, Json, State};
 use serde::Deserialize;
 use tantivy::collector::TopDocs;
 use tantivy::schema::Term;
@@ -140,6 +140,52 @@ fn modify_index(
         .body("{}"))
 }
 
+fn drop_index(req: &HttpRequest<SearchState>) -> Result<HttpResponse, SearchEngineError> {
+    let state = req.state();
+    let schema = &state.schema;
+    let tpost = TantivyPost::new(&schema);
+
+    let query = match state.query_parser.parse_query("*") {
+        Ok(v) => v,
+        Err(e) => return Err(SearchEngineError::from(e)),
+    };
+
+    // iterate in chunks over all docs and delete them
+    loop {
+        let searcher = state.reader.searcher();
+
+        let top_docs = match searcher.search(&query, &TopDocs::with_limit(10_000)) {
+            Ok(v) => v,
+            Err(e) => return Err(SearchEngineError::from(e)),
+        };
+
+        if top_docs.len() == 0 {
+            break;
+        }
+
+        let mut writer = state.writer.lock().unwrap();
+
+        for (_, doc_address) in top_docs {
+            let doc = searcher.doc(doc_address)?;
+            let thread_id = doc.get_first(tpost.thread_id_f).unwrap().i64_value();
+            let thread_id_term = Term::from_field_i64(tpost.thread_id_f, thread_id);
+
+            writer.delete_term(thread_id_term);
+        }
+
+        writer.commit()?;
+        state.reader.reload()?;
+    }
+
+    // finally collect garbage
+    let mut writer = state.writer.lock().unwrap();
+    writer.garbage_collect_files()?;
+
+    Ok(HttpResponse::Ok()
+        .content_type("application/json")
+        .body("{}"))
+}
+
 fn main() {
     let host = "0.0.0.0:8080";
 
@@ -160,6 +206,10 @@ fn main() {
                             cfg.0 .0.limit(10_000_000_000); // <- limit size of the payload to 10Gb
                         })
                 })
+                .boxed(),
+            App::with_state(search_state.clone())
+                .prefix("/drop")
+                .resource("", |r| r.method(http::Method::POST).f(drop_index))
                 .boxed(),
         ]
     })

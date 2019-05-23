@@ -3,7 +3,7 @@ POST http://localhost:8080/search HTTP/2.0
 Content-Type: application/json
 
 {
-    "query":"thread_id:273",
+    "query":"*",
     "topk": 10
 }
 
@@ -27,6 +27,11 @@ Content-Type: application/json
             }
     }
 ]
+
+###
+
+POST http://localhost:8080/drop HTTP/2.0
+
 
 ###
 

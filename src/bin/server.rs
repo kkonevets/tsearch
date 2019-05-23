@@ -180,6 +180,7 @@ fn drop_index(req: &HttpRequest<SearchState>) -> Result<HttpResponse, SearchEngi
     // finally collect garbage
     let mut writer = state.writer.lock().unwrap();
     writer.garbage_collect_files()?;
+    writer.commit()?;
 
     Ok(HttpResponse::Ok()
         .content_type("application/json")

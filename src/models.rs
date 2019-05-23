@@ -1,4 +1,4 @@
-#[derive(Queryable, Deserialize)]
+#[derive(Queryable, Serialize, Deserialize)]
 pub struct Post {
     pub thread_id: i64,
     #[serde(default)]

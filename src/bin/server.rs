@@ -8,7 +8,7 @@ extern crate failure;
 extern crate serde_derive;
 
 use actix_web::{error, http, server::HttpServer, App, HttpRequest, HttpResponse, Json, State};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use tantivy::collector::TopDocs;
 use tantivy::schema::Term;
 use tsearch::crud::{doc_by_id, TantivyPost};
@@ -92,7 +92,7 @@ fn search_index(
         .body(result))
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 struct ModifyInfo {
     overwrite: bool,
     delete: bool,
@@ -220,4 +220,62 @@ fn main() {
 
     println!("Started http server: {}", host);
     let _ = sys.run();
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+
+    fn batch_insert() {
+        extern crate hyper;
+
+        use super::ModifyInfo;
+        use diesel::prelude::*;
+        use hyper::rt::{self, Future};
+        use hyper::{Body, Client, Request};
+        use tsearch::establish_connection;
+        use tsearch::models::Post;
+        use tsearch::schema::threads_message_extra::dsl::*;
+
+        rt::run(rt::lazy(|| {
+            let client = Client::new();
+
+            let connection = establish_connection();
+            let results = threads_message_extra
+                // .filter(published.eq(true))
+                .limit(5)
+                .load::<Post>(&connection)
+                .expect("Error loading posts");
+
+            let mut items = Vec::new();
+            for post in results {
+                let item = ModifyInfo {
+                    post: post,
+                    overwrite: true,
+                    delete: false,
+                };
+
+                items.push(item);
+            }
+
+            let body = serde_json::to_string(&items).unwrap();
+
+            let req = Request::builder()
+                .method("POST")
+                .uri("http://localhost:8080/modify")
+                .header("Content-Type", "application/json")
+                .header("Accept-Encoding", "gzip")
+                .body(Body::from(body))
+                .expect("request builder");
+
+            client
+                .request(req)
+                .map(|res| {
+                    println!("Response: {}", res.status());
+                })
+                .map_err(|err| {
+                    println!("Error: {}", err);
+                })
+        }));
+    }
 }

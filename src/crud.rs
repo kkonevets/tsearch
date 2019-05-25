@@ -36,15 +36,14 @@ pub struct TantivyPost {
 
 impl TantivyPost {
     pub fn new(schema: &Schema) -> TantivyPost {
-        let post = TantivyPost {
+        TantivyPost {
             thread_id_f: schema.get_field("thread_id").unwrap(),
             title_f: schema.get_field("title").unwrap(),
             text_f: schema.get_field("text").unwrap(),
             node_id_f: schema.get_field("node_id").unwrap(),
             need_moder_f: schema.get_field("needModer").unwrap(),
             post_date_f: schema.get_field("post_date").unwrap(),
-        };
-        post
+        }
     }
 
     pub fn add(&self, post: &Post, writer: &mut IndexWriter) {

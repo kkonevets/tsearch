@@ -117,17 +117,14 @@ fn modify_index(
         if record.delete {
             writer.delete_term(thread_id_term.clone());
         } else {
-            match doc_by_id(&state.reader, &thread_id_term)? {
-                Some(_) => {
-                    if record.overwrite {
-                        writer.delete_term(thread_id_term.clone());
-                    } else {
-                        // document already exists, do nothing
-                        continue;
-                    }
+            if doc_by_id(&state.reader, &thread_id_term)?.is_some() {
+                if record.overwrite {
+                    writer.delete_term(thread_id_term.clone());
+                } else {
+                    // document already exists, do nothing
+                    continue;
                 }
-                None => (),
-            };
+            }
 
             tpost.add(&post, &mut writer);
         }
@@ -159,7 +156,7 @@ fn drop_index(req: &HttpRequest<SearchState>) -> Result<HttpResponse, SearchEngi
             Err(e) => return Err(SearchEngineError::from(e)),
         };
 
-        if top_docs.len() == 0 {
+        if top_docs.is_empty() {
             break;
         }
 

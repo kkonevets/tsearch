@@ -3,7 +3,7 @@ POST http://localhost:8080/search
 Content-Type: application/json
 
 {
-    "query":"*",
+    "query":"thread_id:2745",
     "topk": 10
 }
 
@@ -19,7 +19,7 @@ Accept-Encoding: gzip
         "delete": false,
         "doc": 
             {
-                "thread_id": 274,
+                "thread_id": 2745,
                 "title": "test",
                 "text": "test",
                 "node_id": 0,
@@ -39,4 +39,4 @@ POST http://localhost:8080/drop HTTP/2.0
 curl -d '{
     "query":"Вязание крючком для начинающих. Видеокурс из 30 уроков",
     "topk": 5
-}' -H "Content-Type: application/json" -X POST http://localhost:8080/
+}' -H "Content-Type: application/json" -X POST http://localhost:8080/search

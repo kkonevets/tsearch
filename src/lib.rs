@@ -29,11 +29,11 @@ pub fn establish_connection() -> MysqlConnection {
 }
 
 pub fn preprocess(text: &str) -> String {
-    return text.replace("-", " ");
+    text.replace("-", " ")
 }
 
 pub fn register_tokenizer(index: &Index) {
-    let stopwords = [
+    let stopwords = vec![
         "и",
         "в",
         "во",
@@ -187,12 +187,12 @@ pub fn register_tokenizer(index: &Index) {
         "между",
     ];
 
-    let stopwords_vec = stopwords.into_iter().map(|w| w.to_string()).collect();
+    let stopwords = stopwords.into_iter().map(ToString::to_string).collect();
 
     let ru_stem = SimpleTokenizer
         .filter(RemoveLongFilter::limit(40))
         .filter(LowerCaser)
-        .filter(StopWordFilter::remove(stopwords_vec))
+        .filter(StopWordFilter::remove(stopwords))
         .filter(Stemmer::new(Language::Russian));
 
     index.tokenizers().register("ru_stem", ru_stem);

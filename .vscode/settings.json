@@ -11,7 +11,7 @@
     ],
     "sync-rsync.sites": [
         {
-            "localPath": "/Users/guyos/Documents/ssergeev/",
+            "localPath": "/Users/guyos/Documents/tsearch/",
             "remotePath": "root@188.120.254.29:/root/ssergeev"
         },
     ],

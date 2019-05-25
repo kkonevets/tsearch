@@ -1,15 +1,15 @@
 
-POST http://localhost:8080/search 
+POST http://188.120.254.29:8080/search 
 Content-Type: application/json
 
 {
-    "query":"*",
+    "query":"thread_id:5274",
     "topk": 10
 }
 
 ###
 
-POST http://localhost:8080/modify HTTP/2.0
+POST http://188.120.254.29:8080/modify HTTP/2.0
 Content-Type: application/json
 Accept-Encoding: gzip
 
@@ -19,9 +19,9 @@ Accept-Encoding: gzip
         "delete": false,
         "doc": 
             {
-                "thread_id": 273,
-                "title": "fff",
-                "text": "!!!",
+                "thread_id": 274,
+                "title": "test",
+                "text": "test",
                 "node_id": 0,
                 "needModer": 0,
                 "post_date": 0
@@ -31,7 +31,7 @@ Accept-Encoding: gzip
 
 ###
 
-POST http://localhost:8080/drop HTTP/2.0
+POST http://188.120.254.29:8080/drop HTTP/2.0
 
 
 ###

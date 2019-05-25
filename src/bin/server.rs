@@ -261,7 +261,7 @@ mod tests {
 
             let req = Request::builder()
                 .method("POST")
-                .uri("http://188.120.254.29:8080/modify")
+                .uri("http://localhost:8080/modify")
                 .header("Content-Type", "application/json")
                 .header("Accept-Encoding", "gzip")
                 .body(Body::from(body))

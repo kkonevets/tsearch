@@ -1,15 +1,15 @@
 
-POST http://188.120.254.29:8080/search 
+POST http://localhost:8080/search 
 Content-Type: application/json
 
 {
-    "query":"thread_id:5274",
+    "query":"*",
     "topk": 10
 }
 
 ###
 
-POST http://188.120.254.29:8080/modify HTTP/2.0
+POST http://localhost:8080/modify HTTP/2.0
 Content-Type: application/json
 Accept-Encoding: gzip
 
@@ -31,7 +31,7 @@ Accept-Encoding: gzip
 
 ###
 
-POST http://188.120.254.29:8080/drop HTTP/2.0
+POST http://localhost:8080/drop HTTP/2.0
 
 
 ###

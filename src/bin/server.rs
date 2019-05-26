@@ -75,11 +75,7 @@ fn search_index(
             Err(e) => return Err(SearchEngineError::from(e)),
         };
 
-        let mut doc_str = "[".to_string();
-        doc_str.push_str(&_score.to_string());
-        doc_str.push_str(",");
-        doc_str.push_str(&schema.to_json(&retrieved_doc));
-        doc_str.push_str("]");
+        let doc_str = format!("[{},{}]", _score, schema.to_json(&retrieved_doc));
         docs.push(doc_str);
     }
 

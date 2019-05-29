@@ -47,14 +47,14 @@ impl TantivyPost {
     }
 
     pub fn add(&self, post: &Post, writer: &mut IndexWriter) {
-        let mut all_text = post.title.clone();
-        all_text.push_str(" ");
-        all_text.push_str(&post.text);
+        // let mut all_text = post.title.clone();
+        // all_text.push_str(" ");
+        // all_text.push_str(&post.text);
 
         writer.add_document(doc!(
             self.thread_id_f => post.thread_id,
             self.title_f => preprocess(&post.title),
-            self.text_f => preprocess(&all_text),
+            self.text_f => preprocess(&post.text),
             self.node_id_f => post.node_id,
             self.need_moder_f => post.needModer,
             self.post_date_f => post.post_date

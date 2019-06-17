@@ -127,6 +127,8 @@ fn modify_index(
     }
 
     writer.commit()?;
+    // TODO:
+    // writer.wait_merging_threads();
 
     Ok(HttpResponse::Ok()
         .content_type("application/json")
@@ -135,44 +137,9 @@ fn modify_index(
 
 fn drop_index(req: &HttpRequest<SearchState>) -> Result<HttpResponse, SearchEngineError> {
     let state = req.state();
-    let schema = &state.schema;
-    let tpost = TantivyPost::new(&schema);
-
-    let query = match state.query_parser.parse_query("*") {
-        Ok(v) => v,
-        Err(e) => return Err(SearchEngineError::from(e)),
-    };
-
-    // iterate in chunks over all docs and delete them
-    loop {
-        let searcher = state.reader.searcher();
-
-        let top_docs = match searcher.search(&query, &TopDocs::with_limit(10_000)) {
-            Ok(v) => v,
-            Err(e) => return Err(SearchEngineError::from(e)),
-        };
-
-        if top_docs.is_empty() {
-            break;
-        }
-
-        let mut writer = state.writer.lock().unwrap();
-
-        for (_, doc_address) in top_docs {
-            let doc = searcher.doc(doc_address)?;
-            let thread_id = doc.get_first(tpost.thread_id_f).unwrap().i64_value();
-            let thread_id_term = Term::from_field_i64(tpost.thread_id_f, thread_id);
-
-            writer.delete_term(thread_id_term);
-        }
-
-        writer.commit()?;
-        state.reader.reload()?;
-    }
-
-    // finally collect garbage
     let mut writer = state.writer.lock().unwrap();
-    writer.garbage_collect_files()?;
+    writer.delete_all_documents()?;
+    writer.commit()?;
 
     Ok(HttpResponse::Ok()
         .content_type("application/json")

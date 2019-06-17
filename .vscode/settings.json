@@ -15,4 +15,5 @@
             "remotePath": "root@ssergeev:/root/ssergeev"
         },
     ],
+    "editor.formatOnSave": true,
 }

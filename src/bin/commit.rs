@@ -67,6 +67,5 @@ fn main() -> tantivy::Result<()> {
 
     // This call is blocking.
     index_writer.commit()?;
-
-    Ok(())
+    index_writer.wait_merging_threads()
 }

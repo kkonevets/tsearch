@@ -3,7 +3,7 @@ POST http://localhost:8080/search
 Content-Type: application/json
 
 {
-    "query":"thread_id:2745",
+    "query":"*",
     "topk": 10
 }
 
